@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html><head><meta name="viewport" content="width=device-width,initial-scale=1">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>body{background:#111;color:#fff;font-family:system-ui;padding:20px} input,select{width:100%;padding:12px;margin:6px 0;border-radius:8px;border:none} .card{background:#222;padding:15px;border-radius:12px;margin:10px 0} button{padding:10px 16px;border-radius:8px;border:none;font-weight:bold}</style>
+</head><body>
+</head>
+<body>
+<script>
+   let pw = prompt("Owner password - Kamsi BBQ:");
+   if(pw !== "kamsi2024"){
+     alert("Access denied! Owner only");
+    window.location.href = "index.html";
+  }
+ </script>
+<h2>Kamsi BBQ - Admin</h2>
+<div class="card">
+<h3>Add New Food</h3>
+<input id="name" placeholder="Name e.g Jollof">
+<input id="price" type="number" placeholder="Price e.g 5500">
+<select id="category"><option>BBQ</option><option>Suya</option><option>Rice</option><option>Drinks</option></select>
+<input id="desc" placeholder="Description">
+<input id="img" placeholder="Image URL - paste Unsplash link">
+<button onclick="addItem()" style="background:#ff6b00;color:#fff;width:100%">Add Item</button>
+</div>
+<div id="list"></div>
+<script>
+const supa = supabase.createClient('https://fixrrrpmrozvlfmcncvp.supabase.co','sb_publishable__u_EkO3j_-kDUV735fbWBQ_7Jj-HfWL');
+async function load(){const {data}=await supa.from('menu_items').select('*').order('id'); document.getElementById('list').innerHTML=data.map(i=>`<div class="card"><img src="${i.image_url}" style="width:100%;height:150px;object-fit:cover;border-radius:8px"><h3>${i.name}</h3><input value="${i.name}" id="n${i.id}"><input value="${i.price}" id="p${i.id}"><input value="${i.image_url}" id="im${i.id}"><div><button onclick="updateItem(${i.id})" style="background:#00c853;color:#fff">Save</button> <button onclick="delItem(${i.id})" style="background:#ff1744;color:#fff">Delete</button></div></div>`).join('')}
+async function addItem(){await supa.from('menu_items').insert({name:name.value,price:parseInt(price.value),category:category.value,description:desc.value,image_url:img.value}); alert('Added!'); load()}
+async function updateItem(id){await supa.from('menu_items').update({name:document.getElementById('n'+id).value,price:parseInt(document.getElementById('p'+id).value),image_url:document.getElementById('im'+id).value}).eq('id',id); alert('Saved!');}
+async function delItem(id){if(confirm('Delete?')){await supa.from('menu_items').delete().eq('id',id); load()}}
+load();
+</script></body></html>
